@@ -28,6 +28,7 @@ const clearInput = function() {
 }
 const clearFlags = function() {
   resetInputFlag = false;
+  blockOperationRepeat = false;
 }
 const clearAll = function() {
   clearFlags()
@@ -99,7 +100,8 @@ window.addEventListener('click', () => {displayScreen.textContent = userInput});
 
 /* == CALCULATOR LOGIC AND FUNCTIONS == */
 
-let calculatorMemory = [null, null, null]
+let calculatorMemory = [null, null, null];
+let blockOperationRepeat = false;
 
 const operate = function(memoryArray) {
   const num1 = parseFloat(memoryArray[0]);
@@ -107,6 +109,7 @@ const operate = function(memoryArray) {
   const operation = memoryArray[2];
   const sevenDigitNumber = parseFloat((operation(num1, num2)).toFixed(7));
   resetInputFlag = true;
+  blockOperationRepeat = true;
   return sevenDigitNumber;
 }
 
@@ -131,6 +134,7 @@ const callToAction = function(calledOperation) {
     resetInputFlag = true;
     return;
   }; 
+  if(blockOperationRepeat === true) return;
   (calledOperation === "result") ? 
     simpleOperation() : chainOperation(calledOperation);
 }

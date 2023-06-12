@@ -1,0 +1,51 @@
+ROADMAP 
+[OK] create basic UI
+[OK] enable number button activity
+[OK] enable function button activity
+[OK] enable add button activity
+  [OK] enable operate function
+  [OK] enable callToAction function
+  [OK] link callToAction button w/ sum button
+[OK] enable remaining operations button activity
+[OK] enable chain operation logic
+
+// types of operation
+  // simpleOperation = if called w/ equal
+    // consecutiveEqual flag turned on
+  // chainOperation = if called w/ operation sign
+    //consecutiveOperator boolean flag;
+      //if equal operator, do nothing;
+      //if different operator, call changeOperation;
+// negate consecutive operator button presses;
+  // consecutiveOperator boolean flag;
+  // consecutiveEqual boolean flag;
+
+/*
+possible "call to action" scenarios:
+WHEN THE MEMORY IS EMPTY
+  [ ] user inputs a number then presses an operation button;
+  [ ] user is returning from a operation ended w/ "=" then press an operation button;
+WHEN THERE IS VALUES ALLOCATED IN THE MEMORY ARRAY
+  [ ] user inputs a number then presses the equal sign;
+    -> simpleOperation function;
+      -> call operate;
+      -> clear memory
+  [ ] user inputs a number then presses another operation sign;
+    -> chainOperation function;
+      -> call operate;
+      -> prepare memory for next input;
+WEIRD BEHAVIOR
+  [ ] consecutive operation presses
+    [ ] same operation button being pressed
+      -> ignore action;
+    [ ] different operation button being pressed
+      -> changeOperation function;
+        -> change operation in memory;
+  [ ] multiple equal signs presses
+    * with empty memory
+      -> ignore action;
+    * with allocated memory
+      -> ignore action
+  [ ] user press a number after returning an operation
+    [ ] turn resetInputFlag ON!
+*/
