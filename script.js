@@ -20,22 +20,21 @@ const divide = function(num1, num2) {
   if (num2 === 0) return "ERROR";
   return num1 / num2;
 }
-const clear = function(memoryArray) {
-  consecutiveEqual = false;
-  consecutiveOperation = false;
-  memoryArray = [null, null, null];
-  userInput = "0";
-  return memoryArray;
+const clearMemory = function() {
+  return [null, null, null]
 }
-
-/* 
-[OK] como construir os números (string);
-  [OK] adicionar novo item na string
-  [OK] remover elemento da string
-  [OK] se a string for 0, apertar 0 não muda ela;
-  [OK] garantir que a string só tenha um ponto; 
-  [OK] como o DELETE funcionará com o ponto decimal?
-*/
+const clearInput = function(userInput) {
+  return "0"
+}
+const clearFlags = function(variable) {
+  return false;
+}
+const clearAll = function() {
+  consecutiveEqual = clearFlags();
+  consecutiveOperation = clearFlags();
+  calculatorMemory = clearMemory();
+  userInput = clearInput();
+}
 
 /* == USER INPUT == */
 
@@ -84,6 +83,12 @@ numberButtons.forEach(number => number.addEventListener(
   'click', () => {userInput = includeDigit(number.textContent, userInput)}
 ));
 
+const delButton = document.querySelector('#button-delete');
+delButton.addEventListener('click', () => {userInput = removeDigit(userInput)});
+
+const clearButton = document.querySelector('#button-clear');
+clearButton.addEventListener('click', () => {clearAll()})
+
 // through keyboard (future feature)
 
 // show number on display
@@ -93,65 +98,6 @@ window.addEventListener('click', () => {displayScreen.textContent = userInput});
 
 /* == CALCULATOR LOGIC == */
 
-// types of operation
-  // simpleOperation = if called w/ equal
-    // consecutiveEqual flag turned on
-  // chainOperation = if called w/ operation sign
-    //consecutiveOperator boolean flag;
-      //if equal operator, do nothing;
-      //if different operator, call changeOperation;
-// negate consecutive operator button presses;
-  // consecutiveOperator boolean flag;
-  // consecutiveEqual boolean flag;
-
-/*
-possible "call to action" scenarios:
-WHEN THE MEMORY IS EMPTY
-  [ ] user inputs a number then presses an operation button;
-  [ ] user is returning from a operation ended w/ "=" then press an operation button;
-WHEN THERE IS VALUES ALLOCATED IN THE MEMORY ARRAY
-  [ ] user inputs a number then presses the equal sign;
-    -> simpleOperation function;
-      -> call operate;
-      -> clear memory
-  [ ] user inputs a number then presses another operation sign;
-    -> chainOperation function;
-      -> call operate;
-      -> prepare memory for next input;
-WEIRD BEHAVIOR
-  [ ] consecutive operation presses
-    [ ] same operation button being pressed
-      -> ignore action;
-    [ ] different operation button being pressed
-      -> changeOperation function;
-        -> change operation in memory;
-  [ ] multiple equal signs presses
-    * with empty memory
-      -> ignore action;
-    * with allocated memory
-      -> ignore action
-  [ ] user press a number after returning an operation
-    [ ] turn resetInputFlag ON!
-*/
-
-// let calculatorMemory = [null, null, null]
-// let consecutiveEqual = false;
-// let consecutiveOperation = false
-
-// const operate = function(memoryArray) {
-//   const num1 = parseFloat(memoryArray[0]);
-//   const num2 = parseFloat(memoryArray[1]);
-//   const operation = memoryArray[2];
-//   const sevenDigitNumber = parseFloat((operation(num1, num2)).toFixed(7));
-//   resetInputFlag = true;
-//   return sevenDigitNumber;
-// }
-// const callToAction = function() { 
-
-// }
-// const simpleOperation = function() {
-
-// }
-// const chainOperation = function() {
-
-// }
+let calculatorMemory = [null, null, null]
+let consecutiveEqual = false;
+let consecutiveOperation = false
