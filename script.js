@@ -1,22 +1,19 @@
                 /* == MATH OPERATIONS AND BASIC FUNCTIONS == */
 
 const checkInput = function(num1, num2) {
-  if (isNaN(num1) || isNaN(num2)) return true;
+  if (isNaN(num1) || isNaN(num2) || num1 === "+inf" || num1 === "-inf") 
+    return true;
 }
 const add = function(num1, num2) {
-  if (checkInput(num1,num2)) return "ERROR";
   return num1 + num2;
 }
 const subtract = function(num1, num2) {
-  if (checkInput(num1,num2)) return "ERROR";
   return num1 - num2;
 }
 const multiply = function(num1, num2) {
-  if (checkInput(num1, num2)) return "ERROR";
   return num1 * num2;
 }
 const divide = function(num1, num2) {
-  if (checkInput(num1,num2)) return "ERROR";
   if (num2 === 0) return "ERROR";
   return num1 / num2;
 }
@@ -50,7 +47,7 @@ const resetInputCheck = function(resetInputFlag, userInput) {
 }
 const includeDigit = function(buttonValue, userInput) {
   userInput = resetInputCheck(resetInputFlag, userInput);
-  if (userInput.length > 7) return userInput;
+  if (userInput.length > 8) return userInput;
   if(userInput === "0" && buttonValue === "0") return userInput;
   if(userInput.includes(buttonValue) && buttonValue === ".") return userInput;
   if(userInput === "0" && buttonValue !== '.') {
@@ -69,7 +66,64 @@ const removeDigit = function(userInput) {
   return userInput.split("").slice(0, -1).join("");
 }
 
-                /* == USER INTERFACE AND INTERACTIVITY == */
+/* == CALCULATOR LOGIC AND FUNCTIONS == */
+
+let calculatorMemory = [null, null, null];
+let blockOperationRepeat = false;
+
+const operate = function(memoryArray) {
+  if(checkInput(memoryArray[0], memoryArray[1])) return "ERROR";
+
+  const num1 = parseFloat(memoryArray[0]);
+  const num2 = parseFloat(memoryArray[1]);
+  const operation = memoryArray[2];
+  const sevenDigitNumber = parseFloat((operation(num1, num2)).toFixed(7));
+  resetInputFlag = true;
+  blockOperationRepeat = true;
+  return sevenDigitNumber;
+}
+
+const simpleOperation = function() { 
+  calculatorMemory[1] = userInput;
+  userInput = `${operate(calculatorMemory)}`;
+  fitNumberToDisplay();
+  clearMemory();
+}
+const chainOperation = function(calledOperation) {
+  calculatorMemory[1] = userInput;
+  userInput = `${operate(calculatorMemory)}`;
+  fitNumberToDisplay();
+  clearMemory();
+  calculatorMemory[0] = userInput;
+  calculatorMemory[2] = calledOperation;
+}
+
+const callToAction = function(calledOperation) {
+  if(calculatorMemory[2] === null && calledOperation === "result") return;
+  if(calculatorMemory[2] === null) {
+    calculatorMemory[0] = userInput;
+    calculatorMemory[2] = calledOperation;
+    resetInputFlag = true;
+    return;
+  }; 
+  if(blockOperationRepeat === true) return;
+  (calledOperation === "result") ? 
+    simpleOperation() : chainOperation(calledOperation);
+}
+
+const fitNumberToDisplay = () => {
+  if (parseFloat(userInput) > 1e100) {
+    userInput = '+inf';
+  }
+  if (parseFloat(userInput) < -1e100) {
+    userInput = '-inf';
+  }
+  if (Math.abs(parseFloat(userInput)) > 999999999) {
+    userInput = `${parseFloat(userInput).toExponential(5)}`;;
+  }
+}
+
+/* == USER INTERFACE AND INTERACTIVITY == */
 
 const addButton = document.querySelector('#button-add');
 const subtractButton = document.querySelector('#button-subtract');
@@ -97,44 +151,3 @@ equalButton.addEventListener('click', () => callToAction('result'));
 const displayScreen = document.querySelector('#display');
 displayScreen.textContent = '0';
 window.addEventListener('click', () => {displayScreen.textContent = userInput});
-
-/* == CALCULATOR LOGIC AND FUNCTIONS == */
-
-let calculatorMemory = [null, null, null];
-let blockOperationRepeat = false;
-
-const operate = function(memoryArray) {
-  const num1 = parseFloat(memoryArray[0]);
-  const num2 = parseFloat(memoryArray[1]);
-  const operation = memoryArray[2];
-  const sevenDigitNumber = parseFloat((operation(num1, num2)).toFixed(7));
-  resetInputFlag = true;
-  blockOperationRepeat = true;
-  return sevenDigitNumber;
-}
-
-const simpleOperation = function() { 
-  calculatorMemory[1] = userInput;
-  userInput = `${operate(calculatorMemory)}`;
-  clearMemory();
-}
-const chainOperation = function(calledOperation) {
-  calculatorMemory[1] = userInput;
-  userInput = `${operate(calculatorMemory)}`;
-  clearMemory();
-  calculatorMemory[0] = userInput;
-  calculatorMemory[2] = calledOperation;
-}
-
-const callToAction = function(calledOperation) {
-  if(calculatorMemory[2] === null && calledOperation === "result") return;
-  if(calculatorMemory[2] === null) {
-    calculatorMemory[0] = userInput;
-    calculatorMemory[2] = calledOperation;
-    resetInputFlag = true;
-    return;
-  }; 
-  if(blockOperationRepeat === true) return;
-  (calledOperation === "result") ? 
-    simpleOperation() : chainOperation(calledOperation);
-}

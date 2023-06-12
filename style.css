@@ -33,13 +33,15 @@ body {
   width: 100%;
   color: white;
   font-family: Helvetica, sans-serif;
-  font-size: 80px;
+  font-size: 56px;
   display: flex; 
   justify-content: flex-end;
   align-items: flex-end;
   overflow-wrap: break-word;
   word-wrap: break-word;
   hyphens: none;
+  padding: 2px;
+  margin: 0;
 }
 
 .row {
