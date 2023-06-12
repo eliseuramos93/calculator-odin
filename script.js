@@ -115,12 +115,12 @@ const operate = function(memoryArray) {
 
 const simpleOperation = function() { 
   calculatorMemory[1] = userInput;
-  userInput = operate(calculatorMemory);
+  userInput = `${operate(calculatorMemory)}`;
   clearMemory();
 }
 const chainOperation = function(calledOperation) {
   calculatorMemory[1] = userInput;
-  userInput = operate(calculatorMemory);
+  userInput = `${operate(calculatorMemory)}`;
   clearMemory();
   calculatorMemory[0] = userInput;
   calculatorMemory[2] = calledOperation;
