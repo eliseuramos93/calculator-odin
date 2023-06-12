@@ -1,4 +1,4 @@
-/* == MATH OPERATIONS == */
+                /* == MATH OPERATIONS AND BASIC FUNCTIONS == */
 
 const checkInput = function(num1, num2) {
   if (isNaN(num1) || isNaN(num2)) return true;
@@ -21,36 +21,33 @@ const divide = function(num1, num2) {
   return num1 / num2;
 }
 const clearMemory = function() {
-  return [null, null, null]
+  calculatorMemory = [null, null, null]
 }
-const clearInput = function(userInput) {
-  return "0"
+const clearInput = function() {
+  userInput = "0"
 }
-const clearFlags = function(variable) {
-  return false;
+const clearFlags = function() {
+  resetInputFlag = false;
 }
 const clearAll = function() {
-  consecutiveEqual = clearFlags();
-  consecutiveOperation = clearFlags();
-  calculatorMemory = clearMemory();
-  userInput = clearInput();
+  clearFlags()
+  clearMemory();
+  clearInput();
 }
 
-/* == USER INPUT == */
+                            /* == USER INPUT == */
 
 let userInput = "0";
 let resetInputFlag = false;
 
 const resetInputCheck = function(resetInputFlag, userInput) {
   if (resetInputFlag === true) {
-    resetInputFlag = false;
-    return "0"
+    clearFlags();
+    return "0";
   };
   return userInput;
 }
 const includeDigit = function(buttonValue, userInput) {
-  consecutiveEqual = false;
-  consecutiveOperation = false;
   userInput = resetInputCheck(resetInputFlag, userInput);
   if (userInput.length > 7) return userInput;
   if(userInput === "0" && buttonValue === "0") return userInput;
@@ -62,42 +59,78 @@ const includeDigit = function(buttonValue, userInput) {
   }
 }
 const removeDigit = function(userInput) {
-  consecutiveEqual = false;
-  consecutiveOperation = false;
+  clearFlags();
   userInput = resetInputCheck(resetInputFlag, userInput);
-  if(userInput === "0") return userInput;
+  if(userInput.length === 1) {
+    userInput = "0";
+    return userInput;
+  };
   return userInput.split("").slice(0, -1).join("");
 }
 
-/* == READING THE USER'S INPUT == */
-// clicking in the UI
+                /* == USER INTERFACE AND INTERACTIVITY == */
 
 const addButton = document.querySelector('#button-add');
 const subtractButton = document.querySelector('#button-subtract');
 const multiplyButton = document.querySelector('#button-multiply');
 const divideButton = document.querySelector('#button-divide');
 const equalButton = document.querySelector('#button-equal');
-
+const delButton = document.querySelector('#button-delete');
+const clearButton = document.querySelector('#button-clear');
 const numberButtons = document.querySelectorAll('.number');
+
+// trigger action when user clicks buttons on calculator
 numberButtons.forEach(number => number.addEventListener(
   'click', () => {userInput = includeDigit(number.textContent, userInput)}
 ));
-
-const delButton = document.querySelector('#button-delete');
 delButton.addEventListener('click', () => {userInput = removeDigit(userInput)});
+clearButton.addEventListener('click', () => {clearAll()});
+addButton.addEventListener('click', () => callToAction(add));
+subtractButton.addEventListener('click', () => callToAction(subtract));
+multiplyButton.addEventListener('click', () => callToAction(multiply));
+divideButton.addEventListener('click', () => callToAction(divide));
+equalButton.addEventListener('click', () => callToAction('result'));
 
-const clearButton = document.querySelector('#button-clear');
-clearButton.addEventListener('click', () => {clearAll()})
+/* == CALCULATOR DISPLAY == */
 
-// through keyboard (future feature)
-
-// show number on display
 const displayScreen = document.querySelector('#display');
 displayScreen.textContent = '0';
 window.addEventListener('click', () => {displayScreen.textContent = userInput});
 
-/* == CALCULATOR LOGIC == */
+/* == CALCULATOR LOGIC AND FUNCTIONS == */
 
 let calculatorMemory = [null, null, null]
-let consecutiveEqual = false;
-let consecutiveOperation = false
+
+const operate = function(memoryArray) {
+  const num1 = parseFloat(memoryArray[0]);
+  const num2 = parseFloat(memoryArray[1]);
+  const operation = memoryArray[2];
+  const sevenDigitNumber = parseFloat((operation(num1, num2)).toFixed(7));
+  resetInputFlag = true;
+  return sevenDigitNumber;
+}
+
+const simpleOperation = function() { 
+  calculatorMemory[1] = userInput;
+  userInput = operate(calculatorMemory);
+  clearMemory();
+}
+const chainOperation = function(calledOperation) {
+  calculatorMemory[1] = userInput;
+  userInput = operate(calculatorMemory);
+  clearMemory();
+  calculatorMemory[0] = userInput;
+  calculatorMemory[2] = calledOperation;
+}
+
+const callToAction = function(calledOperation) {
+  if(calculatorMemory[2] === null && calledOperation === "result") return;
+  if(calculatorMemory[2] === null) {
+    calculatorMemory[0] = userInput;
+    calculatorMemory[2] = calledOperation;
+    resetInputFlag = true;
+    return;
+  }; 
+  (calledOperation === "result") ? 
+    simpleOperation() : chainOperation(calledOperation);
+}
